@@ -21,17 +21,27 @@ def get_category(file_name):
     return "Others"
 
 
-def scan_directory(path):
-    items=os.listdir(path)
+def scan_directory(path, recursive=False):
+    
     files=[]
-    #folders=[]
-    for item in items:
-        full_path=os.path.join(path, item)
-        if os.path.isfile(full_path):
-            files.append(full_path)
-    #     else:
-    #         folders.append(full_path)
-    # return files, folders
+    if(recursive):
+        for root, dirs, filenames in os.walk(path):
+            dirs[:] = [
+                d for d in dirs
+                if d not in FILE_TYPES.keys()
+            ]
+            for filename in filenames:
+                full_path=os.path.join(root, filename)
+                files.append(full_path)
+        # print("ROOT:", root)
+        # print("DIRS:", dirs)
+    else:
+        items=os.listdir(path)
+        for item in items:
+            full_path=os.path.join(path, item)
+            if os.path.isfile(full_path):
+                files.append(full_path)
+
     return files
 
 def get_unique_destination(destination):
@@ -54,15 +64,22 @@ def build_move_plan(files):
         filename=os.path.basename(file_path)
 
         category=get_category(filename)
-        destination_folder= os.path.join(os.path.dirname(file_path), category)
+
+        current_folder=os.path.dirname(file_path)
+
+        if os.path.basename(current_folder) == category:
+            continue
+
+        destination_folder= os.path.join(current_folder, category)
         destination = os.path.join (destination_folder, filename)
+
+      
+        # if os.path.abspath(file_path) == os.path.abspath(destination): 
+        #     #check if absolute value of path is same 
+        #     continue
+
         destination=get_unique_destination(destination)
 
-        # if file_path == destination:
-        #     continue
-        if os.path.abspath(file_path) == os.path.abspath(destination): 
-            #check if absolute value of path is same 
-            continue
 
         plan.append({
             "file": filename,
@@ -94,8 +111,8 @@ def execute_move_plan(plan):
     logging.info("MOVE OPERATION COMPLETED")
 
 
-def organise_files(path, dry_run=True):
-    files=scan_directory(path)
+def organise_files(path, dry_run=True, recursive=False):
+    files=scan_directory(path, recursive)
     plan=build_move_plan(files)
 
     if not plan:
@@ -123,3 +140,13 @@ def get_user_confirmation():
     choice = input("\nProceed with moving files? (y/n): ").lower()
 
     return choice == "y"
+
+
+
+# for root, dirs, filenames in os.walk("test"):
+#     print("\nROOT:", root)
+#     print("DIRS:", dirs)
+#     print("FILES:", filenames)
+
+#print(scan_directory("test", recursive=True))
+

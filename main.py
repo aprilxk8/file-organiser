@@ -20,6 +20,10 @@ def main():
         "--execute",
         action="store_true", help="Execute and move files according to the plan"
     )
+    parser.add_argument(
+        "--recursive",
+        action="store_true", help="Scan directories recursively"
+    )
     args=parser.parse_args()
 
     if args.dry_run and args.execute:
@@ -32,8 +36,8 @@ def main():
     
     dry_run_mode=args.dry_run
 
-    organise_files(args.path, dry_run=dry_run_mode)
+    organise_files(args.path, dry_run=dry_run_mode, recursive=args.recursive)
 
 if __name__ == "__main__":
-    main()
+    main() 
 
