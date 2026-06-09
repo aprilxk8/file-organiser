@@ -1,7 +1,7 @@
 #map file extensions to categories
-FILE_TYPES = {
-    "Images": [".jpg", ".jpeg", ".png", ".gif"],
-    "Documents": [".pdf", ".txt", ".docx"],
-    "Videos": [".mp4", ".avi", ".mkv"],
-    "Audio": [".mp3", ".wav"]
-}
+
+import json
+
+def load_file_types():
+    with open("config.json", "r") as f:
+        return json.load(f)

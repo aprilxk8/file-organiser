@@ -3,3 +3,5 @@ __pycache__/
 organiser.log
 .vscode/
 test/
+move_history.json
+.pytest_cache/
